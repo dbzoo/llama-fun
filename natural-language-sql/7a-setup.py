@@ -30,7 +30,7 @@ class Emp(Base):
     empno = Column(Integer, primary_key=True)
     ename = Column(String(10))
     job = Column(String(9))
-    mgr = Column(Integer)
+    mgr = Column(Integer, ForeignKey('emp.empno'))
     hiredate = Column(Date)
     sal = Column(Float(7, 2))
     comm = Column(Float(7, 2))
@@ -38,6 +38,12 @@ class Emp(Base):
     
     # Define the relationship with the 'dept' table
     dept = relationship('Dept', back_populates='employees')
+
+    # Define the self-referential relationship for the manager
+    manager = relationship('Emp', remote_side=[empno], back_populates='subordinates')
+
+    # Define the relationship for subordinates
+    subordinates = relationship('Emp', back_populates='manager')
 
 Base.metadata.create_all(engine)
 dept_data = [
