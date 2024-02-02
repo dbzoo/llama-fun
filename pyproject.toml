@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "llama-fun"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+llama-index = "^0.9.39"
+transformers = "^4.37.2"
+torch = "^2.1.2"
+pypdf = "^4.0.1"
+llama-cpp-python = "^0.2.37"
+psycopg2-binary = "^2.9.9"
+SQLAlchemy = "^2.0.25"
+pgvector = "^0.2.4"
+asyncpg = "^0.29.0"
+SQLAlchemy-Utils = "^0.41.1"
+llama-hub = "^0.0.77"
+wikipedia = "^1.4.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

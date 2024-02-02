@@ -1,0 +1,37 @@
+# This example https://llamahub.ai/l/tools-wikipedia using a Local LLM
+from llama_index import set_global_tokenizer
+from llama_index.llms import Ollama
+from llama_index.agent import ReActAgent
+from llama_index.tools import FunctionTool
+from llama_hub.tools.wikipedia import WikipediaToolSpec
+from llama_index.tools.tool_spec.load_and_search.base import LoadAndSearchToolSpec
+from transformers import AutoTokenizer
+
+ollama = Ollama(model="starling-lm", request_timeout=30.0)
+# https://huggingface.co/TheBloke/Starling-LM-7B-alpha-GGUF
+set_global_tokenizer(AutoTokenizer.from_pretrained("openchat/openchat_3.5").encode)
+
+# https://blog.llamaindex.ai/data-agents-eed797d7972f The
+# LoadAndSearchToolSpec takes in any existing Tool as input.
+#
+# This is helpful for any API endpoint that will by default return
+# large volumes of data — for instance our WikipediaToolSpec will by
+# default return entire Wikipedia pages, which will easily overflow
+# most LLM context windows.
+#
+# The data is pushed into an index and queried.
+
+wiki_search = FunctionTool.from_defaults( fn=WikipediaToolSpec().search_data )
+tool_list = LoadAndSearchToolSpec.from_defaults( wiki_search ).to_tool_list()
+
+agent = ReActAgent.from_tools(tools=tool_list, llm=ollama, verbose=True)
+question = "Search Wikipedia and summarize what is a cheesecake"
+print(f"Q: {question}")
+print("A: "+str(agent.chat(question)))
+
+# Obversations:
+#   With llama2:7b-chat-q5_K_S, llama2:7b-chat-q5_K_M models, the code works, but hits CPU.
+#   llama2:7b-chat-q4_K_M - starling-lm fits in the GPU
+#   Using mistral, mistral:7b-instruct-v0.2-q5_K_M and llama2 confused the ReActAgent
+#
+# Smells like this issue: https://github.com/run-llama/llama_index/issues/9057
