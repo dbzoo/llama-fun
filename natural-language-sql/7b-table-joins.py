@@ -16,7 +16,6 @@ from llama_index.objects import (
         ObjectIndex,
         SQLTableSchema,
     )
-from llama_index.embeddings import HuggingFaceEmbedding
 from transformers import AutoTokenizer
 
 EMBED_DIM=384
